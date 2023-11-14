@@ -183,7 +183,7 @@ module ll_control (
       alt_vel_sum_t1 <= 16'h0000;
     end 
     else begin
-      if wen <= 1'b1;
+      wen <= 1'b1;
     end
   end
 endmodule
