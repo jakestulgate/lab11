@@ -134,7 +134,8 @@ module ll_alu #(
   always_comb begin
     // Adjust new altitude
     // alt_n = (alt_t <= 0) ? 0 : alt_t;
-    alt_n = (alt_t >= 16'd4999) ? 0 : alt_t;
+    alt_n = 
+    alt_n = (alt_t >= 16'd5000) ? 0 : alt_t;
     // Adjust new velocity
     vel_n = (alt_t >= 16'd4999) ? 0 : ((fuel == 0) ? ((vel <= vel_t1) ? 0 : vel_t1) : vel_t2); // if new alt is <= 0 -> 0 otherwise use calculated
     // Adjust new fuel
