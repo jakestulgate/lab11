@@ -122,10 +122,10 @@ module ll_alu #(
   logic [15:0] alt_t, vel_t1, vel_t2, fuel_t;
 
   // Calculate new altitude
-  bcdaddsub4 a1(.a(alt), .b(vel), .op(1'b0), .s(alt_t)); // op = 1 to subtract, op = 0 to add
+  bcdaddsub4 a1(.a(alt), .b(vel), .op(0), .s(alt_t)); // op = 1 to subtract, op = 0 to add
   // Calculate new velocity
-  bcdaddsub4 v1(.a(vel), .b(GRAVITY), .op('b1), .s(vel_t1)); // subtract
-  bcdaddsub4 v2(.a(vel_t1), .b(thrust), .op('b0), .s(vel_t2)); // add
+  bcdaddsub4 v1(.a(vel), .b(GRAVITY), .op(1), .s(vel_t1)); // subtract
+  bcdaddsub4 v2(.a(vel_t1), .b(fuel > 0 ? thrust : 0), .op(0), .s(vel_t2)); // add
   // Calculate new fuel
   bcdaddsub4 f1(.a(fuel), .b(thrust), .op(1), .s(fuel_t));
 
