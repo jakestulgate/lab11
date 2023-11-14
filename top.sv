@@ -107,6 +107,42 @@ module ll_memory #(
 
 endmodule
 
+module ll_alu #(
+  parameter GRAVITY = 16'h5 // -5ft/sec^2
+)(
+  input logic [15:0] alt,
+  input logic [15:0] vel,
+  input logic [15:0] fuel,
+  input logic [15:0] thrust,
+  output logic [15:0] alt_n,
+  output logic [15:0] vel_n,
+  output logic [15:0] fuel_n
+);
+
+  logic [15:0] temp;
+
+  // Calculate new altitude
+  always_comb begin
+    temp = (thrust >= alt) ? 16'h0000 : alt - thrust;
+    alt_n = (temp <= 0) ? 16'h0000 : temp;
+  end
+
+  // Calculate new velocity
+  always_comb begin
+    temp = vel + alt_n;
+    vel_n = (temp <= 0) ? 16'h0000 : temp;
+  end
+
+  // Calculate new fuel
+  always_comb begin
+    temp = (thrust > fuel) ? 16'h0000 : fuel - thrust;
+    fuel_n = (temp <= 0) ? 16'h0000 : temp;
+  end
+
+endmodule
+
+
+
 
 
 // 2 bit full adder
