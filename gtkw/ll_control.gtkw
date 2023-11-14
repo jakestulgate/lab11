@@ -1,0 +1,29 @@
+[*]
+[*] GTKWave Analyzer v3.3.114 (w)1999-2023 BSI
+[*]
+[dumpfile] "ll_control.fst"
+[savefile] "ll_control.gtkw"
+[timestart] 1
+[size] 1031 608
+[pos] -1 -1
+*-2.072833 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 278
+[signals_width] 102
+[sst_expanded] 1
+[sst_vpaned_height] 160
+@28
+LL_CONTROL.clk
+LL_CONTROL.rst
+@200
+-
+@22
+LL_CONTROL.alt[15:0]
+LL_CONTROL.vel[15:0]
+@200
+-
+@28
+LL_CONTROL.crash
+LL_CONTROL.land
+LL_CONTROL.wen
+[pattern_trace] 1
+[pattern_trace] 0

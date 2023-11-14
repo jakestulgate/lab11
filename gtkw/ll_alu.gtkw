@@ -1,0 +1,27 @@
+[*]
+[*] GTKWave Analyzer v3.3.114 (w)1999-2023 BSI
+[*]
+[dumpfile] "ll_alu.fst"
+[savefile] "ll_alu.gtkw"
+[timestart] 108
+[size] 1557 600
+[pos] -1 -1
+*-4.320586 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] LL_ALU.
+[sst_width] 278
+[signals_width] 126
+[sst_expanded] 1
+[sst_vpaned_height] 157
+@22
+LL_ALU.alt[15:0]
+LL_ALU.vel[15:0]
+LL_ALU.fuel_n[15:0]
+LL_ALU.fuel[15:0]
+@200
+-
+@22
+LL_ALU.alt_n[15:0]
+LL_ALU.thrust[15:0]
+LL_ALU.vel_n[15:0]
+[pattern_trace] 1
+[pattern_trace] 0

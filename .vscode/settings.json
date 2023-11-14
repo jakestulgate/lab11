@@ -1,0 +1,9 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/Users/jacobstulgate/Library/Mobile Documents/com~apple~CloudDocs/270/lab11",
+            "binaryPath": "/Users/jacobstulgate/Library/Mobile Documents/com~apple~CloudDocs/270/lab11/openGLtutorial",
+            "binaryArgs": []
+        }
+    ]
+}

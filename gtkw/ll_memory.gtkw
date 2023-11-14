@@ -1,0 +1,45 @@
+[*]
+[*] GTKWave Analyzer v3.3.114 (w)1999-2023 BSI
+[*]
+[dumpfile] "ll_memory.fst"
+[savefile] "ll_memory.gtkw"
+[timestart] 1
+[size] 1099 600
+[pos] -1 -1
+*-1.694321 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] LL_MEMORY.
+[sst_width] 278
+[signals_width] 142
+[sst_expanded] 1
+[sst_vpaned_height] 157
+@29
+LL_MEMORY.clk
+@28
+LL_MEMORY.rst
+@200
+-
+@28
+LL_MEMORY.wen
+@200
+-
+@22
+LL_MEMORY.alt[15:0]
+LL_MEMORY.vel[15:0]
+LL_MEMORY.fuel[15:0]
+LL_MEMORY.thrust[15:0]
+@200
+-
+@22
+LL_MEMORY.alt_n[15:0]
+LL_MEMORY.vel_n[15:0]
+LL_MEMORY.fuel_n[15:0]
+LL_MEMORY.thrust_n[15:0]
+@200
+-
+@22
+LL_MEMORY.ll_memory.ALTITUDE
+LL_MEMORY.ll_memory.VELOCITY
+LL_MEMORY.ll_memory.FUEL
+LL_MEMORY.ll_memory.THRUST
+[pattern_trace] 1
+[pattern_trace] 0
