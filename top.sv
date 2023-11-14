@@ -13,26 +13,6 @@ module top (
   output logic txclk, rxclk,
   input  logic txready, rxready
 );
-// starts at some height Y above moon, falling at 5ft/s^2 towards ground
-// thrusters counteract gravity anywhere from 0 to 9ft/s^2
-// crash if downwards vel is 30ft/s or larger OR if thrust is above 5
-// otherwise it will land
-
-// demo
-/* The lunar lander starts 4500 feet above the Moon.
-The initial thrust is set to 4, and gravity is set to 5, so you start picking up speed at the rate of (4 - 5) = 1 ft/s2.
-As downward velocity increases, your altitude starts dropping. 
-The thrust is then adjusted to 0, in order to maximize the effect of gravity on the lander, and therefore pick up speed faster.
-
-Around the point where the velocity reaches -80 to -90 ft/s,
-we set a thrust of 5 ft/s to counteract gravity, and therefore keep our velocity constant.
-At 1500 ft, we set full thrust by setting it to 9 ft/s2,
-in order to start decreasing our downward velocity so that we don't crash due to our high velocity.
-Once we reach a downward velocity less than 30 ft/s, we can set thrust back to 5 to let the lander continue descent at a constant velocity.
-
-Notice that when the altitude reaches a value near zero, the green light turns on to indicate that we have safely landed. If our velocity was greater than 30 ft/s, or the thrust was bigger than 5 ft/s2, we would have crashed.
-*/
-
 // ----- INPUTS -----
 
 // create 100hz clock (done)
@@ -66,7 +46,13 @@ Notice that when the altitude reaches a value near zero, the green light turns o
 
 // RBG LEDs red/green/blue
 
-  assign red = 1'b0;
+// Instantiate the additional modules
+
+
+// ... (other module instantiations)
+
+// Instantiate the provided modules
+  assign red = 1'b1;
 
 endmodule
 
@@ -121,25 +107,35 @@ module ll_alu #(
 
   logic [15:0] alt_t, vel_t1, vel_t2, fuel_t;
 
-  // Calculate new altitude
-  bcdaddsub4 a1(.a(alt), .b(vel), .op(0), .s(alt_t)); // op = 1 to subtract, op = 0 to add
-  // Calculate new velocity
-  bcdaddsub4 v1(.a(vel), .b(GRAVITY), .op(1), .s(vel_t1)); // subtract
-  bcdaddsub4 v2(.a(vel_t1), .b(thrust), .op(0), .s(vel_t2)); // add
-  // Calculate new fuel
-  bcdaddsub4 f1(.a(fuel), .b(thrust), .op(1), .s(fuel_t));
+  // if fuel == 0
+  assign thrust = (fuel == 0) ? 0 : thrust;
 
-  
+  // Calculate new alt
+  bcdaddsub4 a1(.a(alt), .b(vel), .op(1'b0), .s(alt_t)); // op = 1 to subtract, op = 0 to add
+  // Calculate new velocity
+  bcdaddsub4 v1(.a(vel), .b(GRAVITY), .op(1'b1), .s(vel_t1)); // subtract
+  bcdaddsub4 v2(.a(vel_t1), .b(thrust), .op(1'b0), .s(vel_t2)); // add
+  // Calculate new fuel
+  bcdaddsub4 f1(.a(fuel), .b(thrust), .op(1'b1), .s(fuel_t));
   
   always_comb begin
-    // Adjust new altitude
-    // alt_n = (alt_t <= 0) ? 0 : alt_t;
-    alt_n = (alt_t >= 16'h4999) ? 0 : alt_t; // error
-    // Adjust new velocity
-    vel_n = (alt_t >= 16'h4999) ? 0 : ((fuel == 0) ? ((vel <= vel_t1) ? 0 : vel_t1) : vel_t2); // if new alt is <= 0 -> 0 otherwise use calculated
-    // Adjust new fuel
-    // fuel_n = (fuel_t <= 0) ? 0 : fuel_t;
-    fuel_n = (fuel_t >= 16'h4999) ? 0 : fuel_t;
+    
+    if (alt_t >= 16'h4999) begin
+      alt_n = 0;
+      vel_n = 0;
+    end else begin
+      alt_n = alt_t;
+      vel_n = vel_t1;
+
+      // Adjust new fuel
+      if (fuel_t >= 16'h4999) begin
+        fuel_n = 0;
+      end else begin
+        fuel_n = fuel_t;
+      end
+    end 
+    
+    
   end
 
 endmodule
@@ -158,10 +154,8 @@ module ll_control (
   logic [15:0] alt_vel_sum_t1;
   logic [15:0] alt_vel_sum_t2;
 
-  // Calculate the sum of altitude and velocity using bcdaddsub4
   bcdaddsub4 av1(.a(alt), .b(vel), .op(1'b0), .s(alt_vel_sum));
 
-  // Calculate the sum of altitude and velocity in the next clock cycle
   always_ff @(posedge clk or posedge rst) begin
     if (rst) begin
       alt_vel_sum_t1 <= 16'h0000;
@@ -382,3 +376,29 @@ endmodule
 
 
 
+module keysync(
+  input clk, 
+  input rst,
+  input [19:0] keyin,
+  output [4:0] keyout,
+  output keyclk
+);
+
+logic [1:0] delay;
+always_ff @(posedge clk, posedge rst)
+if (rst) begin
+  delay <= 2'b0;
+end
+else begin
+  delay <= (delay << 1) | {1'b0, |keyin[19:0]}; // strobe;
+end
+// 32 to 5 encoder
+assign keyclk = delay[1];
+assign keyout[0] = keyin[1] | keyin[3] | keyin[5] | keyin[7] | keyin[9] | keyin[11] | keyin[13] | keyin[15] | keyin[17] | keyin[19] ? 1 : 0; // evey other bit
+assign keyout[1] = |keyin[3:2] | |keyin[7:6] | |keyin[11:10] | |keyin[15:14] | |keyin[19:18]? 1 : 0; // every other 2 bits
+assign keyout[2] = |keyin[7:4] | |keyin[15:12] ? 1 : 0; // every other 4 bits
+assign keyout[3] = |keyin[15:8] ? 1 : 0; // every other 8 bits
+assign keyout[4] = |keyin[19:16] ? 1 : 0; // every other 16 bits (here it would be 31:1 if there were more inputs)
+
+
+endmodule
