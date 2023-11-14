@@ -178,7 +178,7 @@ module ll_control (
     if (rst) begin
       land <= 1'b0;
     end else begin
-      if (alt_vel_sum_t2 >= 16'h4999) begin
+      if (alt_vel_sum_t2 >= 16'h4999) begin // negativeß
         land <= 1'b1;
       end else begin
         land <= 1'b0;
@@ -191,7 +191,7 @@ module ll_control (
     if (rst) begin
       crash <= 1'b0;
     end else begin
-      if (vel < 16'hFDD0) begin  // -30 in 16-bit two's complement
+      if (vel >= 16'h9970) begin  // -30 in 16-bit two's complement
         crash <= 1'b1;
       end else begin
         crash <= 1'b0;
