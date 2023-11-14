@@ -119,24 +119,24 @@ module ll_alu #(
   output logic [15:0] fuel_n
 );
 
-  logic [15:0] temp;
+  logic [15:0] alt_t, vel_t, fuel_t;
 
   // Calculate new altitude
   always_comb begin
-    temp = (thrust >= alt) ? 16'h0000 : alt - thrust;
-    alt_n = (temp <= 0) ? 16'h0000 : temp;
+    alt_t = (thrust >= alt) ? 16'h0000 : alt - thrust;
+    alt_n = (alt_t <= 0) ? 16'h0000 : alt_t;
   end
 
   // Calculate new velocity
   always_comb begin
-    temp = vel + alt_n;
-    vel_n = (temp <= 0) ? 16'h0000 : temp;
+    vel_t = vel + alt_n;
+    vel_n = (vel_t <= 0) ? 16'h0000 : vel_t;
   end
 
   // Calculate new fuel
   always_comb begin
-    temp = (thrust > fuel) ? 16'h0000 : fuel - thrust;
-    fuel_n = (temp <= 0) ? 16'h0000 : temp;
+    fuel_t = (thrust > fuel) ? 16'h0000 : fuel - thrust;
+    fuel_n = (fuel_t <= 0) ? 16'h0000 : fuel_t;
   end
 
 endmodule
