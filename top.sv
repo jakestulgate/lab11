@@ -171,7 +171,10 @@ module ll_control (
     if ((vel <= 16'h9970 && vel >= 16'h4999)) begin
       // crashed
       crash <= 1'b1;
+      land <= 1'b0;
     end else begin
+      // landed
+      land <= 1'b1;
       crash <= 1'b0;
     end
   end
@@ -180,7 +183,7 @@ module ll_control (
   always_ff @(posedge clk or posedge rst) begin
     if (rst) begin
       wen <= 1'b0;
-      alt_vel_sum_t1 <= 16'h0000;
+      alt_vel_sum_t <= 16'h0000;
     end 
     else begin
       wen <= 1'b1;
