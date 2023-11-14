@@ -164,29 +164,23 @@ module ll_control (
 
   bcdaddsub4 av1(.a(alt), .b(vel), .op(1'b0), .s(alt_vel_sum));
 
-  // crash detection
-  always_ff @(posedge clk or posedge rst) begin
-    if (rst) begin
-      crash <= 1'b0;
-    end else begin
-      // if vel < -30
-      if (vel < 16'h9970 && vel >= 16'h4999) begin
-        crash <= 1'b1;
-      end else begin
-        crash <= 1'b0;
-      end
-    end
-  end
-
   // land detection
   always_ff @(posedge clk or posedge rst) begin
     if (rst) begin
       land <= 1'b0;
+      crash <= 1'b0;
     end else begin
-      if (alt > 16'h0 && alt < 16'h4999) begin
-        land <= 1'b0;
-      end else begin
-        land <= 1'b1;
+      // if alt_vel_sum <= 0 (reached ground)
+      if (alt_vel_sum <= 16'h0 && alt_vel_sum > 16'h4999) begin
+        // if velocity < -30 (crashed)
+        if (vel < 16'h9970 && vel >= 16'h4999) begin
+          crash <= 1'b1;
+          land <= 1'b0;
+        end else begin
+          // else landed
+          crash <= 1'b0;
+          land <= 1'b1;
+        end
       end
     end
   end
