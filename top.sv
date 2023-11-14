@@ -132,11 +132,12 @@ module ll_alu #(
   
   
   always_comb begin
-    // Calculate new altitude
-    alt_n = (alt_t < 0) ? 0 : alt_t; // alt_t = alt - vel -> alt >= vel for alt > 0
-    // Calculate new velocity
-    vel_n = (fuel == 0) ? vel_t1 : vel_t2;
-    // Calculate new fuel
+    // Adjust new altitude
+    alt_n = (alt_t <= 0) ? 0 : alt_t; // alt_t = alt - vel -> alt >= vel for alt > 0
+    vel_n = 0;
+    // Adjust new velocity
+    vel_n = (vel_n == 0) ? (fuel == 0) ? 0 : vel_t1 : vel_t2;
+    // Adjust new fuel
     fuel_n = (fuel_t < 0) ? 0 : fuel_t; // fuel_t = fuel - thrust -> fuel >= thrust for fuel > 0 
   end
 
