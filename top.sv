@@ -13,6 +13,7 @@ module top (
   output logic txclk, rxclk,
   input  logic txready, rxready
 );
+// test
 // starts at some height Y above moon, falling at 5ft/s^2 towards ground
 // thrusters counteract gravity anywhere from 0 to 9ft/s^2
 // crash if downwards vel is 30ft/s or larger OR if thrust is above 5
