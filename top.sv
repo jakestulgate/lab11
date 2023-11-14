@@ -108,7 +108,7 @@ module ll_alu #(
   logic [15:0] alt_t, vel_t1, vel_t2, fuel_t;
 
   // if fuel == 0
-  assign thrust = (fuel == 0) ? 0 : thrust;
+  // assign thrust = (fuel == 0) ? 0 : thrust;
 
   // Calculate new alt
   bcdaddsub4 a1(.a(alt), .b(vel), .op(1'b0), .s(alt_t)); // op = 1 to subtract, op = 0 to add
@@ -125,13 +125,22 @@ module ll_alu #(
       vel_n = 0;
     end else begin
       alt_n = alt_t;
-      vel_n = vel_t1;
+      if (fuel == 0) begin
+          vel_n = vel_t1;
+        end else begin
+          vel_n = vel_t2;
+        end
 
       // Adjust new fuel
       if (fuel_t >= 16'h4999) begin
         fuel_n = 0;
       end else begin
-        fuel_n = fuel_t;
+        // if fuel == 0
+        if (fuel == 0) begin
+          fuel_n = 0;
+        end else begin
+          fuel_n = fuel_t;
+        end
       end
     end 
     
