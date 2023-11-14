@@ -191,7 +191,7 @@ module ll_control (
     if (rst) begin
       crash <= 1'b0;
     end else begin
-      if (vel >= 16'h9970) begin  // -30 in 16-bit two's complement
+      if (vel <= 16'h9970 && vel >= 16'h4999) begin  // -30 in 16-bit two's complement
         crash <= 1'b1;
       end else begin
         crash <= 1'b0;
