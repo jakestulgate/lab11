@@ -134,13 +134,81 @@ module ll_alu #(
   always_comb begin
     // Adjust new altitude
     // alt_n = (alt_t <= 0) ? 0 : alt_t;
-    alt_n = 
-    alt_n = (alt_t >= 16'd5000) ? 0 : alt_t;
+    alt_n = (alt_t >= 16'd4999) ? 0 : alt_t; // error
     // Adjust new velocity
     vel_n = (alt_t >= 16'd4999) ? 0 : ((fuel == 0) ? ((vel <= vel_t1) ? 0 : vel_t1) : vel_t2); // if new alt is <= 0 -> 0 otherwise use calculated
     // Adjust new fuel
     // fuel_n = (fuel_t <= 0) ? 0 : fuel_t;
     fuel_n = (fuel_t >= 16'd4999) ? 0 : fuel_t;
+  end
+
+endmodule
+
+module ll_control (
+  input logic clk,
+  input logic rst,
+  input logic [15:0] alt,
+  input logic [15:0] vel,
+  output logic land,
+  output logic crash,
+  output logic wen
+);
+
+  logic [15:0] alt_vel_sum;
+  logic [15:0] alt_vel_sum_t1;
+  logic [15:0] alt_vel_sum_t2;
+
+  // Calculate the sum of altitude and velocity using bcdaddsub4
+  bcdaddsub4 addsub_inst(.a(alt), .b(vel), .op(1'b0), .s(alt_vel_sum));
+
+  // Calculate the sum of altitude and velocity in the next clock cycle
+  always_ff @(posedge clk or posedge rst) begin
+    if (rst) begin
+      alt_vel_sum_t1 <= 16'h0000;
+      alt_vel_sum_t2 <= 16'h0000;
+    end else begin
+      alt_vel_sum_t1 <= alt_vel_sum;
+      alt_vel_sum_t2 <= alt_vel_sum_t1;
+    end
+  end
+
+  // Landed condition
+  always_ff @(posedge clk or posedge rst) begin
+    if (rst) begin
+      land <= 1'b0;
+    end else begin
+      if (alt_vel_sum_t2 <= 16'h0000) begin
+        land <= 1'b1;
+      end else begin
+        land <= 1'b0;
+      end
+    end
+  end
+
+  // Crashed condition
+  always_ff @(posedge clk or posedge rst) begin
+    if (rst) begin
+      crash <= 1'b0;
+    end else begin
+      if (vel < 16'hFDD0) begin  // -30 in 16-bit two's complement
+        crash <= 1'b1;
+      end else begin
+        crash <= 1'b0;
+      end
+    end
+  end
+
+  // Write enable condition
+  always_ff @(posedge clk or posedge rst) begin
+    if (rst) begin
+      wen <= 1'b0;
+    end else begin
+      if (!land && !crash) begin
+        wen <= 1'b1;
+      end else begin
+        wen <= 1'b0;
+      end
+    end
   end
 
 endmodule
