@@ -119,24 +119,28 @@ module ll_alu #(
   output logic [15:0] fuel_n
 );
 
-  logic [15:0] alt_t, vel_t, fuel_t;
+  logic [15:0] alt_t, vel_t1, vel_t2, fuel_t;
 
   // Calculate new altitude
-  always_comb begin
-    alt_t = (thrust >= alt) ? 16'h0000 : alt - thrust;
-    alt_n = (alt_t <= 0) ? 16'h0000 : alt_t;
-  end
-
+  bcdaddsub4 a1(.a(alt), .b(vel), .op(1'b0), .s(alt_t)); // op = 1 to subtract, op = 0 to add
   // Calculate new velocity
-  always_comb begin
-    vel_t = vel + alt_n;
-    vel_n = (vel_t <= 0) ? 16'h0000 : vel_t;
-  end
-
+  bcdaddsub4 v1(.a(vel), .b(GRAVITY), .op('b1), .s(vel_t1)); // subtract
+  bcdaddsub4 v2(.a(vel_t1), .b(thrust), .op('b0), .s(vel_t2)); // add
   // Calculate new fuel
+  bcdaddsub4 f1(.a(fuel), .b(thrust), .op(1), .s(fuel_t));
+  
   always_comb begin
-    fuel_t = (thrust > fuel) ? 16'h0000 : fuel - thrust;
-    fuel_n = (fuel_t <= 0) ? 16'h0000 : fuel_t;
+    // Calculate new altitude
+    // bcdaddsub4(.a(alt), .b(vel), .op(1'b0), .s(alt_t)); // op = 1 to subtract, op = 0 to add
+    alt_n <= alt_t;
+    // Calculate new velocity
+    // bcdaddsub4(.a(vel), .b(GRAVITY), .op('b1), .s(vel_t1)); // subtract
+    // bcdaddsub4(.a(vel_t1), .b(thrust), .op('b0), .s(vel_t2)); // add
+    vel_n <= (fuel = 0) ? vel_t1 : vel_t2;
+
+    // Calculate new fuel
+    // bcdaddsub4(.a(fuel), .b(thrust), .op(1), .s(fuel_t));
+    fuel_n <= fuel_t;
   end
 
 endmodule
