@@ -161,7 +161,6 @@ module ll_control (
 );
 
   logic [15:0] alt_vel_sum;
-  logic [15:0] alt_vel_sum_t;
 
   bcdaddsub4 av1(.a(alt), .b(vel), .op(1'b0), .s(alt_vel_sum));
 
@@ -197,7 +196,6 @@ module ll_control (
   always_ff @(posedge clk or posedge rst) begin
     if (rst) begin
       wen <= 1'b0;
-      alt_vel_sum_t <= 16'h0000;
     end 
     else begin
       if (!land && !crash) begin
