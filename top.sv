@@ -167,27 +167,31 @@ module ll_control (
 
   // crash detection
   always_ff @(posedge clk or posedge rst) begin
-    // if current velocity is < -30 
-    if ((vel < 16'h9970 && vel >= 16'h4999)) begin
-      // crashed
-      crash <= 1'b1;
-    end else begin
-      // landed
+    if (rst) begin
       crash <= 1'b0;
+    end else begin
+      // if vel < -30
+      if (vel < 16'h9970 && vel >= 16'h4999) begin
+        crash <= 1'b1;
+      end else begin
+        crash <= 1'b0;
+      end
     end
   end
 
   // land detection
   always_ff @(posedge clk or posedge rst) begin
-    // if current altitude is > 0
-    if ((alt > 16'h0 && alt < 16'h4999)) begin
-      // not landed
+    if (rst) begin
       land <= 1'b0;
     end else begin
-      // landed
-      land <= 1'b1;
+      if (alt > 16'h0 && alt < 16'h4999) begin
+        land <= 1'b0;
+      end else begin
+        land <= 1'b1;
+      end
     end
   end
+  
 
   // write enable 
   always_ff @(posedge clk or posedge rst) begin
