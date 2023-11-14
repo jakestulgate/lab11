@@ -165,11 +165,11 @@ module ll_control (
   always_ff @(posedge clk or posedge rst) begin
     if (rst) begin
       alt_vel_sum_t1 <= 16'h0000;
-      alt_vel_sum_t2 <= 16'h0000;
+      // alt_vel_sum_t2 <= 16'h0000;
     end 
     else begin
       alt_vel_sum_t1 <= alt_vel_sum;
-      alt_vel_sum_t2 <= alt_vel_sum_t1;
+      // alt_vel_sum_t2 <= alt_vel_sum_t1;
     end
   end
 
@@ -177,10 +177,12 @@ module ll_control (
   always_ff @(posedge clk or posedge rst) begin
     if (rst) begin
       land <= 1'b0;
-    end else begin
-      if (alt_vel_sum_t2 >= 16'h4999) begin // negativeß
+    end
+    else begin
+      if (alt_vel_sum_t1 > 16'h4999 || alt_vel_sum_t1 == 0) begin // negative
         land <= 1'b1;
-      end else begin
+      end 
+      else begin
         land <= 1'b0;
       end
     end
@@ -190,10 +192,12 @@ module ll_control (
   always_ff @(posedge clk or posedge rst) begin
     if (rst) begin
       crash <= 1'b0;
-    end else begin
+    end 
+    else begin
       if (vel <= 16'h9970 && vel >= 16'h4999) begin  // -30 in 16-bit two's complement
         crash <= 1'b1;
-      end else begin
+      end 
+      else begin
         crash <= 1'b0;
       end
     end
@@ -203,10 +207,12 @@ module ll_control (
   always_ff @(posedge clk or posedge rst) begin
     if (rst) begin
       wen <= 1'b0;
-    end else begin
+    end 
+    else begin
       if (!land && !crash) begin
         wen <= 1'b1;
-      end else begin
+      end 
+      else begin
         wen <= 1'b0;
       end
     end
