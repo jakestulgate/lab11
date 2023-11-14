@@ -13,7 +13,6 @@ module top (
   output logic txclk, rxclk,
   input  logic txready, rxready
 );
-// test
 // starts at some height Y above moon, falling at 5ft/s^2 towards ground
 // thrusters counteract gravity anywhere from 0 to 9ft/s^2
 // crash if downwards vel is 30ft/s or larger OR if thrust is above 5
@@ -71,20 +70,20 @@ Notice that when the altitude reaches a value near zero, the green light turns o
 
 endmodule
 
-// module lunarlander #(
-//   parameter FUEL=16'h800,
-//   parameter ALTITUDE=16'h4500,
-//   parameter VELOCITY=16'h0,
-//   parameter THRUST=16'h5,
-//   parameter GRAVITY=16'h5
-// )(
-//   input logic hz100, reset,
-//   input logic [19:0] in,
-//   output logic [7:0] ss7, ss6, ss5, 
-//   output logic [7:0] ss3, ss2, ss1, ss0,
-//   output logic red, green
-// );
-// endmodule
+module lunarlander #(
+  parameter FUEL=16'h800,
+  parameter ALTITUDE=16'h4500,
+  parameter VELOCITY=16'h0,
+  parameter THRUST=16'h5,
+  parameter GRAVITY=16'h5
+)(
+  input logic hz100, reset,
+  input logic [19:0] in,
+  output logic [7:0] ss7, ss6, ss5, 
+  output logic [7:0] ss3, ss2, ss1, ss0,
+  output logic red, green
+);
+endmodule
 
 // module ll_memory #(
 //   parameter ALTITUDE = 16'h4500,
@@ -277,7 +276,7 @@ always_comb begin
     temp = b;
   end
 end
-bcdadd4 u16(.a(a), .b(temp), .ci(op), .S(s), .co());
+bcdadd4 u16(.a(a), .b(temp), .ci(op), .s(s), .co());
 
 endmodule
 
