@@ -123,7 +123,7 @@ module ll_alu #(
     if (alt_t >= 16'h4999 || alt_t == 0) begin
       alt_n = 0;
       vel_n = 0;
-      fueln = fuel_t;
+      fuel_n = fuel_t;
     end else begin
       // otherwise
       alt_n = alt_t;
@@ -161,67 +161,31 @@ module ll_control (
 );
 
   logic [15:0] alt_vel_sum;
-  logic [15:0] alt_vel_sum_t1;
-  logic [15:0] alt_vel_sum_t2;
+  logic [15:0] alt_vel_sum_t;
 
   bcdaddsub4 av1(.a(alt), .b(vel), .op(1'b0), .s(alt_vel_sum));
 
+  // crash or land
   always_ff @(posedge clk or posedge rst) begin
-    if (rst) begin
-      alt_vel_sum_t1 <= 16'h0000;
-      // alt_vel_sum_t2 <= 16'h0000;
-    end 
-    else begin
-      alt_vel_sum_t1 <= alt_vel_sum;
-      // alt_vel_sum_t2 <= alt_vel_sum_t1;
-    end
-  end
-
-  // Landed condition
-  always_ff @(posedge clk or posedge rst) begin
-    if (rst) begin
-      land <= 1'b0;
-    end
-    else begin
-      if (alt_vel_sum_t1 > 16'h4999 || alt_vel_sum_t1 == 0) begin // negative
-        land <= 1'b1;
-      end 
-      else begin
-        land <= 1'b0;
-      end
-    end
-  end
-
-  // Crashed condition
-  always_ff @(posedge clk or posedge rst) begin
-    if (rst) begin
+    // if current velocity is < -30 
+    if ((vel <= 16'h9970 && vel >= 16'h4999)) begin
+      // crashed
+      crash <= 1'b1;
+    end else begin
       crash <= 1'b0;
-    end 
-    else begin
-      if (vel <= 16'h9970 && vel >= 16'h4999) begin  // -30 in 16-bit two's complement
-        crash <= 1'b1;
-      end 
-      else begin
-        crash <= 1'b0;
-      end
     end
   end
 
-  // Write enable condition
+  // write enable 
   always_ff @(posedge clk or posedge rst) begin
     if (rst) begin
       wen <= 1'b0;
+      alt_vel_sum_t1 <= 16'h0000;
     end 
     else begin
-      if (!land && !crash) begin
-        wen <= 1'b1;
-      end 
-      else begin
-        wen <= 1'b0;
-      end
+      if wen <= 1'b1;
     end
   end
-
 endmodule
 
 
