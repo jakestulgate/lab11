@@ -172,6 +172,7 @@ module ll_control (
     end else begin
       // if alt_vel_sum <= 0 (reached ground)
       if (alt_vel_sum <= 16'h0 && alt_vel_sum > 16'h4999) begin
+        land <= 1'b1;
         // if velocity < -30 (crashed)
         if (vel < 16'h9970 && vel >= 16'h4999) begin
           crash <= 1'b1;
@@ -179,7 +180,6 @@ module ll_control (
         end else begin
           // else landed
           crash <= 1'b0;
-          land <= 1'b1;
         end
       end
     end
