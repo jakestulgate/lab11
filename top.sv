@@ -119,20 +119,21 @@ module ll_alu #(
   bcdaddsub4 f1(.a(fuel), .b(thrust), .op(1'b1), .s(fuel_t));
   
   always_comb begin
-    
-    if (alt_t >= 16'h4999) begin
+    // if alt is 0 or neg
+    if (alt_t >= 16'h4999 || alt_t == 0) begin
       alt_n = 0;
       vel_n = 0;
+      fueln = fuel_t;
     end else begin
+      // otherwise
       alt_n = alt_t;
       if (fuel == 0) begin
           vel_n = vel_t1;
         end else begin
           vel_n = vel_t2;
         end
-
       // Adjust new fuel
-      if (fuel_t >= 16'h4999) begin
+      if (fuel_t >= 16'h4999 || alt_t == 0) begin
         fuel_n = 0;
       end else begin
         // if fuel == 0
