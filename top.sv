@@ -134,12 +134,12 @@ module ll_alu #(
   always_comb begin
     // Adjust new altitude
     // alt_n = (alt_t <= 0) ? 0 : alt_t;
-    alt_n = (alt_t >= 16'd4999) ? 0 : alt_t; // error
+    alt_n = (alt_t > 16'd4999 || alt_t == 0) ? 0 : alt_t; // error
     // Adjust new velocity
-    vel_n = (alt_t >= 16'd4999) ? 0 : ((fuel == 0) ? ((vel <= vel_t1) ? 0 : vel_t1) : vel_t2); // if new alt is <= 0 -> 0 otherwise use calculated
+    vel_n = (alt_t > 16'd4999 || alt_t == 0) ? 0 : ((fuel == 0) ? ((vel <= vel_t1) ? 0 : vel_t1) : vel_t2); // if new alt is <= 0 -> 0 otherwise use calculated
     // Adjust new fuel
     // fuel_n = (fuel_t <= 0) ? 0 : fuel_t;
-    fuel_n = (fuel_t >= 16'd4999) ? 0 : fuel_t;
+    fuel_n = (fuel_t > 16'd4999 || alt_t == 0) ? 0 : fuel_t;
   end
 
 endmodule
@@ -159,14 +159,15 @@ module ll_control (
   logic [15:0] alt_vel_sum_t2;
 
   // Calculate the sum of altitude and velocity using bcdaddsub4
-  bcdaddsub4 addsub_inst(.a(alt), .b(vel), .op(1'b0), .s(alt_vel_sum));
+  bcdaddsub4 av1(.a(alt), .b(vel), .op(1'b0), .s(alt_vel_sum));
 
   // Calculate the sum of altitude and velocity in the next clock cycle
   always_ff @(posedge clk or posedge rst) begin
     if (rst) begin
       alt_vel_sum_t1 <= 16'h0000;
       alt_vel_sum_t2 <= 16'h0000;
-    end else begin
+    end 
+    else begin
       alt_vel_sum_t1 <= alt_vel_sum;
       alt_vel_sum_t2 <= alt_vel_sum_t1;
     end
@@ -177,7 +178,7 @@ module ll_control (
     if (rst) begin
       land <= 1'b0;
     end else begin
-      if (alt_vel_sum_t2 <= 16'h0000) begin
+      if (alt_vel_sum_t2 >= 16'h4999) begin
         land <= 1'b1;
       end else begin
         land <= 1'b0;
