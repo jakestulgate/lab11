@@ -136,7 +136,7 @@ module ll_alu #(
     // alt_n = (alt_t <= 0) ? 0 : alt_t;
     alt_n = (alt_t >= 16'd4999) ? 0 : alt_t;
     // Adjust new velocity
-    vel_n = (alt_t >= 16'd4999) ? 0 : ((fuel == 0) ? ((vel <= vel_t1) ? 0 : vel_t1) : ((fuel == 0) ? vel_t1 : vel_t2)); // if new alt is <= 0 -> 0 otherwise use calculated
+    vel_n = (alt_t >= 16'd4999) ? 0 : ((fuel == 0) ? ((vel <= vel_t1) ? 0 : vel_t1) : vel_t2); // if new alt is <= 0 -> 0 otherwise use calculated
     // Adjust new fuel
     // fuel_n = (fuel_t <= 0) ? 0 : fuel_t;
     fuel_n = (fuel_t >= 16'd4999) ? 0 : fuel_t;
