@@ -137,7 +137,7 @@ module ll_alu #(
     // Calculate new velocity
     vel_n = (fuel == 0) ? vel_t1 : vel_t2;
     // Calculate new fuel
-    fuel_n = fuel_t;
+    fuel_n = fuel_t > 0 ? 0 : fuel_t;
   end
 
 endmodule
